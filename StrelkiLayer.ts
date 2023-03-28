@@ -78,14 +78,16 @@ namespace L {
     }
 
     export class StrelkiLayer extends L.GeoJsonLayer {
+        static Renderer: L.Renderer;
         constructor(url: string, options?: L.GeoJsonLayerOptions) {
-            options = {... {
+            options = {
+                ... {
                     refreshIntervalSeconds: 60 * 30,
                     icons: ['gis-strelka-icon']
                 }, ...options};
             super(url, options)
         }
-        
+
         override afterInit(map: L.Map)
         {
             const icons = this.options.icons;
@@ -94,7 +96,9 @@ namespace L {
             }
         }
         pointToLayer (feature: GeoJSON.Feature<GeoJSON.Point,any>, latlng: L.LatLng) {
-            const marker = L.strelkaMarker(latlng, {iconClassName: 'gis-strelka-icon'});
+            const marker = L.strelkaMarker(latlng, {
+                iconClassName: 'gis-strelka-icon'
+            });
             marker.on('click', function (e: LeafletMouseEvent) {
                 const hyperlink = e.sourceTarget.feature.properties.hyperlink;
                 map.fire("gis:dialog:show", new Gis.IframeDialog(hyperlink, e.sourceTarget));
